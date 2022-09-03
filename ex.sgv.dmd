@@ -1,0 +1,8 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<OSDM_Design class="oracle.dbtools.crest.model.design.Design" name="ex.sgv" id="110408B7-2C39-C3FF-9D56-7D974381D60D" version="3.5">
+<createdBy>Gabi</createdBy>
+<createdTime>2022-09-03 00:03:13 UTC</createdTime>
+<ownerDesignName>ex.sgv</ownerDesignName>
+<capitalNames>false</capitalNames>
+<designId>110408B7-2C39-C3FF-9D56-7D974381D60D</designId>
+</OSDM_Design>
