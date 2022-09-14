@@ -1,8 +1,338 @@
-<?xml version = '1.0' encoding = 'UTF-8'?>
-<OSDM_Design class="oracle.dbtools.crest.model.design.Design" name="ex.sgv" id="110408B7-2C39-C3FF-9D56-7D974381D60D" version="3.5">
-<createdBy>Gabi</createdBy>
-<createdTime>2022-09-03 00:03:13 UTC</createdTime>
-<ownerDesignName>ex.sgv</ownerDesignName>
-<capitalNames>false</capitalNames>
-<designId>110408B7-2C39-C3FF-9D56-7D974381D60D</designId>
-</OSDM_Design>
+CREATE TABLE t_sgv_atentd_ch (
+    cd_atendimento_chamado NUMBER(6) NOT NULL,
+    dt_atendimento         DATE,
+    tp_termino_chamada     DATE NOT NULL,
+    ds_chamado_funcionario VARCHAR2(1000) NOT NULL,
+    t_sgv_ch_cd_ch         NUMBER(6) NOT NULL,
+    t_sgv_func_cd_func     NUMBER(3) NOT NULL
+);
+
+CREATE UNIQUE INDEX t_sgv_atentd_ch__idx ON
+    t_sgv_atentd_ch (
+        t_sgv_ch_cd_ch
+    ASC );
+
+ALTER TABLE t_sgv_atentd_ch ADD CONSTRAINT t_sgv_atentd_ch_pk PRIMARY KEY ( cd_atendimento_chamado );
+
+CREATE TABLE t_sgv_categ (
+    cd_categ                   NUMBER(2) NOT NULL,
+    nm_categ                   VARCHAR2(30) NOT NULL,
+    ds_categ                   VARCHAR2(1000) NOT NULL,
+    dt_inicio                  DATE NOT NULL,
+    dt_fim                     DATE,
+    t_sgv_st_categ_cd_st_categ VARCHAR2(1) NOT NULL
+);
+
+ALTER TABLE t_sgv_categ ADD CONSTRAINT t_sgv_categ_pk PRIMARY KEY ( cd_categ );
+
+CREATE TABLE t_sgv_categ_vd (
+    cd_categ_vd NUMBER(2) NOT NULL,
+    nm_categ_vd VARCHAR2(50) NOT NULL
+);
+
+ALTER TABLE t_sgv_categ_vd ADD CONSTRAINT t_sgv_categ_vd_pk PRIMARY KEY ( cd_categ_vd );
+
+CREATE TABLE t_sgv_ch (
+    cd_ch                         NUMBER(6) NOT NULL,
+    ds_comentario_cliente         VARCHAR2(1000) NOT NULL,
+    dt_ch                         DATE NOT NULL,
+    tp_atendimento_total          NUMBER(3) NOT NULL,
+    t_sgv_pessoa_cd_pessoa        NUMBER(6),
+    t_sgv_prod_cd_prod            NUMBER(4) NOT NULL,
+    t_sgv_st_ch_cd_st_ch          VARCHAR2(1) NOT NULL,
+    t_sgv_ind_satisf_cd_satisf    VARCHAR2(1),
+    t_sgv_clas_ch_cd_clas_chamado NUMBER(1) NOT NULL
+);
+
+ALTER TABLE t_sgv_ch ADD CONSTRAINT t_sgv_ch_pk PRIMARY KEY ( cd_ch );
+
+CREATE TABLE t_sgv_clas_ch (
+    cd_clas_chamado NUMBER(1) NOT NULL,
+    nm_clas_chamado VARCHAR2(10) NOT NULL
+);
+
+ALTER TABLE t_sgv_clas_ch ADD CONSTRAINT t_sgv_clas_ch_pk PRIMARY KEY ( cd_clas_chamado );
+
+CREATE TABLE t_sgv_endereco (
+    cd_endereco            NUMBER(6) NOT NULL,
+    tp_enderco             VARCHAR2(10),
+    ds_logradouro          VARCHAR2(50),
+    nr_endereco            VARCHAR2(5),
+    ds_complemento         VARCHAR2(30),
+    st_status              CHAR(1) NOT NULL,
+    t_sgv_pessoa_cd_pessoa NUMBER(6) NOT NULL
+);
+
+COMMENT ON COLUMN t_sgv_endereco.st_status IS
+    'endereço A = ativo e I = inativo';
+
+ALTER TABLE t_sgv_endereco ADD CONSTRAINT t_sgv_endereco_pk PRIMARY KEY ( cd_endereco );
+
+CREATE TABLE t_sgv_fisica (
+    t_sgv_pessoa_cd_pessoa NUMBER(6) NOT NULL,
+    nm_fisica              VARCHAR2(50) NOT NULL,
+    nr_rg                  VARCHAR2(9) NOT NULL,
+    nr_cpf                 VARCHAR2(11) NOT NULL,
+    dt_nascimento          DATE NOT NULL,
+    ds_sexo                CHAR(1) NOT NULL,
+    ds_email               VARCHAR2(50) NOT NULL
+);
+
+ALTER TABLE t_sgv_fisica ADD CONSTRAINT t_sgv_fisica_pk PRIMARY KEY ( t_sgv_pessoa_cd_pessoa );
+
+CREATE TABLE t_sgv_func (
+    cd_func          NUMBER(3) NOT NULL,
+    nm_func          VARCHAR2(50) NOT NULL,
+    dt_nasc_func     DATE NOT NULL,
+    nr_telefone_func NUMBER(13) NOT NULL,
+    ds_email_func    VARCHAR2(50) NOT NULL
+);
+
+ALTER TABLE t_sgv_func ADD CONSTRAINT t_sgv_func_pk PRIMARY KEY ( cd_func );
+
+CREATE TABLE t_sgv_ind_satisf (
+    cd_satisf VARCHAR2(1) NOT NULL,
+    ds_satisf VARCHAR2(50) NOT NULL
+);
+
+ALTER TABLE t_sgv_ind_satisf ADD CONSTRAINT t_sgv_ind_satisf_pk PRIMARY KEY ( cd_satisf );
+
+CREATE TABLE t_sgv_juridica (
+    t_sgv_pessoa_cd_pessoa NUMBER(6) NOT NULL,
+    nm_razao_sosial        VARCHAR2(50) NOT NULL,
+    nm_fantasia            VARCHAR2(50) NOT NULL,
+    nr_cnpj                VARCHAR2(14) NOT NULL,
+    nr_insc_estad          VARCHAR2(9),
+    ds_ramo                VARCHAR2(50) NOT NULL,
+    ds_email               VARCHAR2(50) NOT NULL
+);
+
+ALTER TABLE t_sgv_juridica ADD CONSTRAINT t_sgv_juridica_pk PRIMARY KEY ( t_sgv_pessoa_cd_pessoa );
+
+CREATE TABLE t_sgv_pessoa (
+    cd_pessoa NUMBER(6) NOT NULL,
+    nm_pessoa VARCHAR2(50) NOT NULL
+);
+
+ALTER TABLE t_sgv_pessoa ADD CONSTRAINT t_sgv_pessoa_pk PRIMARY KEY ( cd_pessoa );
+
+CREATE TABLE t_sgv_prod (
+    cd_prod                  NUMBER(4) NOT NULL,
+    nm_prod                  VARCHAR2(30) NOT NULL,
+    ds_prod                  VARCHAR2(1000) NOT NULL,
+    cd_ean13                 NUMBER(13),
+    t_sgv_categ_cd_categ     NUMBER(2) NOT NULL,
+    t_sgv_st_prod_cd_st_prod VARCHAR2(1) NOT NULL
+);
+
+ALTER TABLE t_sgv_prod ADD CONSTRAINT t_sgv_prod_pk PRIMARY KEY ( cd_prod );
+
+CREATE TABLE t_sgv_st_categ (
+    cd_st_categ         VARCHAR2(1) NOT NULL,
+    nm_status_categoria VARCHAR2(30) NOT NULL
+);
+
+ALTER TABLE t_sgv_st_categ ADD CONSTRAINT t_sgv_st_categ_pk PRIMARY KEY ( cd_st_categ );
+
+CREATE TABLE t_sgv_st_ch (
+    cd_st_ch          VARCHAR2(1) NOT NULL,
+    nm_status_chamado VARCHAR2(50) NOT NULL
+);
+
+ALTER TABLE t_sgv_st_ch ADD CONSTRAINT t_sgv_st_ch_pk PRIMARY KEY ( cd_st_ch );
+
+CREATE TABLE t_sgv_st_prod (
+    cd_st_prod VARCHAR2(1) NOT NULL,
+    nm_st_prod VARCHAR2(50) NOT NULL
+);
+
+COMMENT ON COLUMN t_sgv_st_prod.nm_st_prod IS
+    'Nome dos Status A = Ativo e I = Inativo';
+
+ALTER TABLE t_sgv_st_prod ADD CONSTRAINT t_sgv_st_prod_pk PRIMARY KEY ( cd_st_prod );
+
+CREATE TABLE t_sgv_st_vd (
+    cd_st_vd    VARCHAR2(1) NOT NULL,
+    nm_st_video VARCHAR2(30) NOT NULL
+);
+
+ALTER TABLE t_sgv_st_vd ADD CONSTRAINT t_sgv_st_vd_pk PRIMARY KEY ( cd_st_vd );
+
+CREATE TABLE t_sgv_telefone (
+    cd_telefone            NUMBER(6) NOT NULL,
+    nr_ddi                 VARCHAR2(4) NOT NULL,
+    nr_ddd                 VARCHAR2(2),
+    tp_telefone            VARCHAR2(10) NOT NULL,
+    nr_telefone            VARCHAR2(10),
+    t_sgv_pessoa_cd_pessoa NUMBER(6) NOT NULL
+);
+
+ALTER TABLE t_sgv_telefone ADD CONSTRAINT t_sgv_telefone_pk PRIMARY KEY ( cd_telefone );
+
+CREATE TABLE t_sgv_vd (
+    cd_vd                      NUMBER(4) NOT NULL,
+    ds_vd                      VARCHAR2(1000) NOT NULL,
+    t_sgv_prod_cd_prod         NUMBER(4) NOT NULL,
+    t_sgv_st_vd_cd_st_vd       VARCHAR2(1) NOT NULL,
+    t_sgv_categ_vd_cd_categ_vd NUMBER(2) NOT NULL
+);
+
+ALTER TABLE t_sgv_vd ADD CONSTRAINT t_sgv_vd_pk PRIMARY KEY ( cd_vd );
+
+CREATE TABLE t_sgv_visu (
+    cd_visu        NUMBER(6),
+    dt_visu        DATE NOT NULL,
+    t_sgv_vd_cd_vd NUMBER(4) NOT NULL
+);
+
+ALTER TABLE t_sgv_atentd_ch
+    ADD CONSTRAINT t_sgv_atentd_ch_t_sgv_ch_fk FOREIGN KEY ( t_sgv_ch_cd_ch )
+        REFERENCES t_sgv_ch ( cd_ch );
+
+ALTER TABLE t_sgv_atentd_ch
+    ADD CONSTRAINT t_sgv_atentd_ch_t_sgv_func_fk FOREIGN KEY ( t_sgv_func_cd_func )
+        REFERENCES t_sgv_func ( cd_func );
+
+ALTER TABLE t_sgv_categ
+    ADD CONSTRAINT t_sgv_categ_t_sgv_st_categ_fk FOREIGN KEY ( t_sgv_st_categ_cd_st_categ )
+        REFERENCES t_sgv_st_categ ( cd_st_categ );
+
+ALTER TABLE t_sgv_ch
+    ADD CONSTRAINT t_sgv_ch_t_sgv_clas_ch_fk FOREIGN KEY ( t_sgv_clas_ch_cd_clas_chamado )
+        REFERENCES t_sgv_clas_ch ( cd_clas_chamado );
+
+ALTER TABLE t_sgv_ch
+    ADD CONSTRAINT t_sgv_ch_t_sgv_ind_satisf_fk FOREIGN KEY ( t_sgv_ind_satisf_cd_satisf )
+        REFERENCES t_sgv_ind_satisf ( cd_satisf );
+
+ALTER TABLE t_sgv_ch
+    ADD CONSTRAINT t_sgv_ch_t_sgv_pessoa_fk FOREIGN KEY ( t_sgv_pessoa_cd_pessoa )
+        REFERENCES t_sgv_pessoa ( cd_pessoa );
+
+ALTER TABLE t_sgv_ch
+    ADD CONSTRAINT t_sgv_ch_t_sgv_prod_fk FOREIGN KEY ( t_sgv_prod_cd_prod )
+        REFERENCES t_sgv_prod ( cd_prod );
+
+ALTER TABLE t_sgv_ch
+    ADD CONSTRAINT t_sgv_ch_t_sgv_st_ch_fk FOREIGN KEY ( t_sgv_st_ch_cd_st_ch )
+        REFERENCES t_sgv_st_ch ( cd_st_ch );
+
+ALTER TABLE t_sgv_endereco
+    ADD CONSTRAINT t_sgv_endereco_t_sgv_pessoa_fk FOREIGN KEY ( t_sgv_pessoa_cd_pessoa )
+        REFERENCES t_sgv_pessoa ( cd_pessoa );
+
+ALTER TABLE t_sgv_fisica
+    ADD CONSTRAINT t_sgv_fisica_t_sgv_pessoa_fk FOREIGN KEY ( t_sgv_pessoa_cd_pessoa )
+        REFERENCES t_sgv_pessoa ( cd_pessoa );
+
+ALTER TABLE t_sgv_juridica
+    ADD CONSTRAINT t_sgv_juridica_t_sgv_pessoa_fk FOREIGN KEY ( t_sgv_pessoa_cd_pessoa )
+        REFERENCES t_sgv_pessoa ( cd_pessoa );
+
+ALTER TABLE t_sgv_prod
+    ADD CONSTRAINT t_sgv_prod_t_sgv_categ_fk FOREIGN KEY ( t_sgv_categ_cd_categ )
+        REFERENCES t_sgv_categ ( cd_categ );
+
+ALTER TABLE t_sgv_prod
+    ADD CONSTRAINT t_sgv_prod_t_sgv_st_prod_fk FOREIGN KEY ( t_sgv_st_prod_cd_st_prod )
+        REFERENCES t_sgv_st_prod ( cd_st_prod );
+
+ALTER TABLE t_sgv_telefone
+    ADD CONSTRAINT t_sgv_telefone_t_sgv_pessoa_fk FOREIGN KEY ( t_sgv_pessoa_cd_pessoa )
+        REFERENCES t_sgv_pessoa ( cd_pessoa );
+
+ALTER TABLE t_sgv_vd
+    ADD CONSTRAINT t_sgv_vd_t_sgv_categ_vd_fk FOREIGN KEY ( t_sgv_categ_vd_cd_categ_vd )
+        REFERENCES t_sgv_categ_vd ( cd_categ_vd );
+
+ALTER TABLE t_sgv_vd
+    ADD CONSTRAINT t_sgv_vd_t_sgv_prod_fk FOREIGN KEY ( t_sgv_prod_cd_prod )
+        REFERENCES t_sgv_prod ( cd_prod );
+
+ALTER TABLE t_sgv_vd
+    ADD CONSTRAINT t_sgv_vd_t_sgv_st_vd_fk FOREIGN KEY ( t_sgv_st_vd_cd_st_vd )
+        REFERENCES t_sgv_st_vd ( cd_st_vd );
+
+ALTER TABLE t_sgv_visu
+    ADD CONSTRAINT t_sgv_visu_t_sgv_vd_fk FOREIGN KEY ( t_sgv_vd_cd_vd )
+        REFERENCES t_sgv_vd ( cd_vd );
+
+CREATE OR REPLACE TRIGGER arc_arc_1_t_sgv_fisica BEFORE
+    INSERT OR UPDATE OF t_sgv_pessoa_cd_pessoa ON t_sgv_fisica
+    FOR EACH ROW
+DECLARE
+    d VARCHAR2(50);
+BEGIN
+    SELECT
+        a.nm_pessoa
+    INTO d
+    FROM
+        t_sgv_pessoa a
+    WHERE
+        a.cd_pessoa = :new.t_sgv_pessoa_cd_pessoa;
+
+    IF ( d IS NULL OR d <> 'fisica' ) THEN
+        raise_application_error(-20223, 'FK T_SGV_FISICA_T_SGV_PESSOA_FK in Table T_SGV_FISICA violates Arc constraint on Table T_SGV_PESSOA - discriminator column nm_pessoa doesn''t have value ''fisica'''
+        );
+    END IF;
+
+EXCEPTION
+    WHEN no_data_found THEN
+        NULL;
+    WHEN OTHERS THEN
+        RAISE;
+END;
+/
+
+CREATE OR REPLACE TRIGGER arc_arc_1_t_sgv_juridica BEFORE
+    INSERT OR UPDATE OF t_sgv_pessoa_cd_pessoa ON t_sgv_juridica
+    FOR EACH ROW
+DECLARE
+    d VARCHAR2(50);
+BEGIN
+    SELECT
+        a.nm_pessoa
+    INTO d
+    FROM
+        t_sgv_pessoa a
+    WHERE
+        a.cd_pessoa = :new.t_sgv_pessoa_cd_pessoa;
+
+    IF ( d IS NULL OR d <> 'juridica' ) THEN
+        raise_application_error(-20223, 'FK T_SGV_JURIDICA_T_SGV_PESSOA_FK in Table T_SGV_JURIDICA violates Arc constraint on Table T_SGV_PESSOA - discriminator column nm_pessoa doesn''t have value ''juridica'''
+        );
+    END IF;
+
+EXCEPTION
+    WHEN no_data_found THEN
+        NULL;
+    WHEN OTHERS THEN
+        RAISE;
+END;
+
+
+--- SEQUENCES
+
+CREATE SEQUENCE seq_cd_prod
+    START WITH 1
+    INCREMENT BY 1
+    MAXVALUE 9999;
+
+CREATE SEQUENCE seq_cd_categ
+    START WITH 1
+    INCREMENT BY 1
+    MAXVALUE 99;
+   
+CREATE SEQUENCE seq_cd_ch
+    START WITH 1
+    INCREMENT BY 1
+    MAXVALUE 999999;    
+
+    
+
+
+
+--- DROP SEQUENCES
+DROP SEQUENCE seq_cd_prod;
+DROP SEQUENCE seq_cd_ch;
+DROP SEQUENCE seq_cd_categ
